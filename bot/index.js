@@ -5,8 +5,7 @@
  * @LastEditors: lwp
  * @LastEditTime: 2020-08-13 17:15:06
  */
-
-const { Wechaty } = require('wechaty')
+const { log, ScanStatus, WechatyBuilder } = require('wechaty')
 const { PuppetPadlocal } = require('wechaty-puppet-padlocal')
 const { PUPPET_PADLOCAL_TOKEN, BOT_NAME } = require('./config')
 const FriendPass = require('./plugin/friends-pass')
@@ -20,7 +19,7 @@ const {
   EventLogger
 } = require('wechaty-plugin-contrib') //官方插件
 // 初始化
-const bot = new Wechaty({
+const bot = WechatyBuilder.build({
   puppet: new PuppetPadlocal({
     token: PUPPET_PADLOCAL_TOKEN,
   }),

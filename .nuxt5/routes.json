@@ -1,0 +1,62 @@
+[
+  {
+    "name": "admin",
+    "path": "/admin",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\index.vue",
+    "chunkName": "pages/admin/index"
+  },
+  {
+    "name": "admin-enume",
+    "path": "/admin/enume",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\enume.js",
+    "chunkName": "pages/admin/enume"
+  },
+  {
+    "name": "admin-friend",
+    "path": "/admin/friend",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\friend\\\\index.vue",
+    "chunkName": "pages/admin/friend/index"
+  },
+  {
+    "name": "admin-group",
+    "path": "/admin/group",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\group\\\\index.vue",
+    "chunkName": "pages/admin/group/index"
+  },
+  {
+    "name": "admin-reply",
+    "path": "/admin/reply",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\reply\\\\index.vue",
+    "chunkName": "pages/admin/reply/index"
+  },
+  {
+    "name": "admin-task",
+    "path": "/admin/task",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\task\\\\index.vue",
+    "chunkName": "pages/admin/task/index"
+  },
+  {
+    "name": "auth-login",
+    "path": "/auth/login",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\auth\\\\login.vue",
+    "chunkName": "pages/auth/login"
+  },
+  {
+    "name": "admin-reply-modal",
+    "path": "/admin/reply/modal",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\reply\\\\modal.vue",
+    "chunkName": "pages/admin/reply/modal"
+  },
+  {
+    "name": "admin-task-modal",
+    "path": "/admin/task/modal",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\admin\\\\task\\\\modal.vue",
+    "chunkName": "pages/admin/task/modal"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "D:\\\\SourceCode\\\\wxbot\\\\pages\\\\index.vue",
+    "chunkName": "pages/index"
+  }
+]

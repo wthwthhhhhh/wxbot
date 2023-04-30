@@ -58,9 +58,6 @@
       <a-col :span="24" >
         <p>本项目采用nodejs+wechaty+nuxtjs+mongodb，服务器配置为1核2G，运行良好</p>
       </a-col>
-      <a href="https://www.aliyun.com/1111/new?source=5176.11533457&userCode=mpd2xfug" target="_blank">
-        <img src="http://pic.loveyh.com/alit.png" height="200"/>
-      </a>
     </a-row>
   </a-card>
 </a-spin>
@@ -101,7 +98,7 @@ export default {
       });
     },
     createQrcode(url) {
-      const qrcode = new QRCode('qrcode', {
+      const qrcode2 = new QRCode('qrcode', {
         width: 150,  
         height: 150,
         text: url,

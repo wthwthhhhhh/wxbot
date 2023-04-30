@@ -54,7 +54,7 @@ const onLogin = async (bot, robot_id, user) => {
     }
   }
   global.bot = bot
-  await bot.say(robot.startSay)
+  //await bot.say(robot.startSay)
   require('./Task').init()
   return {isLogin:true}
 }

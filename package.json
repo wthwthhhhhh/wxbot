@@ -14,11 +14,18 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
+    "@nuxt/babel-preset-app": "^2.16.3",
+    "@nuxt/vue-app": "^2.16.3",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.9.7",
     "ant-design-vue": "^1.1.10",
+    "axios": "^1.3.5",
+    "consola": "^3.0.2",
+    "cookie": "^0.5.0",
     "core-js": "^2.6.11",
     "cross-env": "^5.2.0",
+    "defu": "^6.1.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.3.0",
@@ -27,17 +34,33 @@
     "log4js": "^6.2.1",
     "moment": "^2.24.0",
     "mongoose": "^5.9.10",
+    "nice-try": "^3.0.1",
+    "node-sass": "^7.0.3",
     "node-schedule": "^1.3.2",
     "node-uuid": "^1.4.8",
     "nuxt": "^2.0.0",
     "qrcodejs2": "^0.0.2",
+    "regenerator-runtime": "^0.13.11",
+    "sass-loader": "^10.4.1",
+    "semver": "^7.4.0",
+    "ufo": "^1.1.1",
+    "unfetch": "^5.0.0",
     "urllib": "^2.34.2",
-    "wechaty": "^0.56.6",
-    "wechaty-puppet-padlocal": "^0.4.0"
+    "vue": "^2.4.2",
+    "vue-client-only": "^2.1.0",
+    "vue-meta": "^2.4.0",
+    "vue-no-ssr": "^1.1.1",
+    "vue-router": "^4.1.6",
+    "vue-template-compiler": "^2.7.14",
+    "vuex": "^3.6.2",
+    "wechaty": "^1.20.2",
+    "wechaty-puppet": "^1.20.2",
+    "wechaty-puppet-padlocal": "^1.11.18"
   },
   "devDependencies": {
-    "node-sass": "^4.9.4",
+    "node-sass": "^7.0.3",
     "nodemon": "^1.18.9",
-    "sass-loader": "^7.1.0"
+    "sass-loader": "^7.1.0",
+    "vue-router": "^3.1.3"
   }
 }
