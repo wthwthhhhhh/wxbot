@@ -10,6 +10,7 @@ const { Group } = require('../../models/group')
 const { Robot } = require('../../models/robot')
 const { Reply } = require('../../models/reply')
 const { Memory } = require('../../models/memory')
+const { MsgRecord } = require('../../models/msgRecord')
 const { v1 } = require('node-uuid')
 const crypto = require('crypto')
 let md5 = crypto.createHash('md5')
@@ -29,10 +30,11 @@ async function onMessage(msg) {
   )
   if (msg.type() === PUPPET.types.Message.Text) {
     if (msg.room()) { //来自群聊
-      console.log("群聊信息")
       let room = await msg.room()
       const group = await Group.findOne({ id: room.id }, { control: 1 })
       if (!group || !group.control) return
+      const topic = await room.topic()
+      await addMsgRecord(msg.id, msg.text(), msg.talker(), room.id, topic);
       if (await msg.mentionSelf()) { //@自己
       console.log("==============来自群聊===============")
         let self = await msg.talker()
@@ -101,51 +103,32 @@ async function isRoomName(msg) {
 
 /**
  * 消息记录
- * @param {string} keyword 关键字
- * @param {string} roomId 群聊id
- * @param {string} person 艾特的群成员
- * @param {string} room 群聊
+ * @param {string} id 消息ID
+ * @param {string} msg 消息内容
+ * @param {string} talker 消息发送者
+ * @param {string} groupId 群聊ID
+ * @param {string} groupName 群聊名称
  */
-async function msgRecord(keyword, roomId, person, room) {
+async function addMsgRecord(id, msg, talker, groupId, groupName) {
   try {
-    const res = await Reply.findOne({ keyword: keyword, status: 1 }, { content: 1, type: 1, factor: 1, roomId: 1 })
-    if (!res) return false
-    if (roomId) { //群聊
-      if (res.type == 0) {
-        if (res.factor == 0 || res.factor == 3) return res.content
-        if (res.factor == 2 && roomId == res.roomId) return res.content
-      }
-      if (res.type == 2) {
-        if (person) {
-          const group = await Group.findOne({ id: roomId }, { maxFoul: 1 })
-          let foulCount = await Memory.countDocuments({ person: person, cmd: keyword, roomId: roomId })
-          if (group.maxFoul - 1 == foulCount) {
-            const contact = await bot.Contact.find({ name: person })
-            await room.del(contact)
-            await Memory.deleteMany({ person: person, roomId: roomId })
-          } else {
-            await Memory.create({ person: person, cmd: keyword, roomId: roomId })
-            foulCount++
-            return `您一定是违反了群的相关规则，如果再收到${group.maxFoul - foulCount}次同类消息，您将被移出本群。`
-          }
-        }
-      }
-      return false
-    }
-    //私聊
-    if (res.type == 1) {
-      const robot = await Robot.findOne({ id: bot.id }, { id: 1, nickName: 1 })
-      const roomList = await Group.find({ robotId: robot.id, autojoin: true }, { topic: 1, id: 1, joinCode: 1 })
-      let content = `${robot.nickName}管理群聊有${roomList.length}个：\n\n`
-      roomList.forEach(item => {
-        content += `${item.joinCode}：【${item.topic}】\n`
-      })
-      content += '\n回复字母即可加入对应的群哦，比如发送 ' + roomList[0].joinCode
-      return content
-    }
-    if (res.factor == 0 || res.factor == 1) return res.content
+    console.log("msgRecord.add=>"+msg)
+    await MsgRecord.create({
+      id: id,
+      personId: talker ? talker.id : null,
+      personName: talker ? talker.name() : null,
+      avatar: talker ? talker.avatar().name : null,
+      groupId: groupId,
+      groupName: groupName,
+      msg: msg,
+      dateTime: new Date(),
+      isAnalysis: false
+    });
+    console.log("msgRecord.added=>" + msg)
+    return true;
+  } catch (err) {
+    console.log("msgRecord.add error=>" + err);
     return false
-  } catch (err) { return false }
+  }
 }
 
 /**

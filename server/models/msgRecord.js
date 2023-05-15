@@ -2,6 +2,7 @@ const { mongoose } = require('../config/db')
 const Schema = mongoose.Schema
 const schema = new Schema({
   id: String,
+  personId: String,
   personName: String,
   avatar: String,
   groupId: String,
@@ -40,7 +41,7 @@ module.exports = {
         //  dateTime: params.dateTime,
         //  isAnalysis: params.isAnalysis
         //}
-        const result = await Reply.create(params)
+        const result = await MsgRecord.create(params)
         return result
       } catch (err) { throw err }
     },
