@@ -3,7 +3,8 @@ const local = {
   host: '0.0.0.0',
   mongoUrl: 'mongodb://localhost:27017/wxrobot',
   secret: '123456',
-  tianApiKey:''
+  tianApiKey: '06177fbc828b713ac9694c1960b8f02d',
+  crmUrl: 'http://192.168.3.172:20001/'
 }
 const development = {
 }

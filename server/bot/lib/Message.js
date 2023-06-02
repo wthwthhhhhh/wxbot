@@ -16,11 +16,13 @@ const crypto = require('crypto')
 let md5 = crypto.createHash('md5')
 const uniqueId = md5.update(v1()).digest('hex')
 const TXHOST = 'http://api.tianapi.com/txapi/'
-const { tianApiKey } = require('../../../config')
+const { tianApiKey, crmUrl } = require('../../../config')
 const urllib = require('urllib')
 const PUPPET = require( "wechaty-puppet")
+const axios = require('axios');
 
 async function onMessage(msg) {
+  try {
   if (msg.self()) return
   console.log("=============================")
   console.log(`msg : ${msg}`)
@@ -28,25 +30,48 @@ async function onMessage(msg) {
     `from: ${msg.talker() ? msg.talker().name() : null}: ${msg.talker() ? msg.talker().id : null
     }`
   )
+  const robot = await Robot.findOne({ id: bot.id }, { id: 1, nickName: 1 })
   if (msg.type() === PUPPET.types.Message.Text) {
     if (msg.room()) { //来自群聊
+      console.log("==============来自群聊===============")
       let room = await msg.room()
       const group = await Group.findOne({ id: room.id }, { control: 1 })
       if (!group || !group.control) return
+      console.log("==============来自群聊1===============")
       const topic = await room.topic()
       await addMsgRecord(msg.id, msg.text(), msg.talker(), room.id, topic);
+
+      var crmRes =  addCrmMsgRecord(msg.id, msg.text(), msg.talker(), room.id, topic, robot);
+
+      console.log("==============来自群聊2===============")
       if (await msg.mentionSelf()) { //@自己
-      console.log("==============来自群聊===============")
         let self = await msg.talker()
         self = '@' + self.name()
         let sendText = msg.text().replace(self, '')
         sendText = sendText.trim()
         // 获取需要回复的内容
         let content = await keyWordReply(sendText, room.id)
-        if (!content) {
-          content = await getReply(sendText)
-        }
-        room.say(content)
+        crmRes.then(async result => {
+          console.log(result)
+            if (result && result.checking) {
+
+              content = result.resultMsg;
+            }
+            if (!content) {
+              content = await getReply(sendText)
+            }
+            room.say(content)
+      })
+        .catch (error => {
+        console.log(error); // 处理错误
+      });
+        //if (crmRes && crmRes.checking()) {
+        //  content = crmRes.resultMsg();
+        //}
+        //if (!content) {
+        //  content = getReply(sendText)
+        //}
+        //room.say(content)
         return
       }
       //@成员
@@ -71,13 +96,27 @@ async function onMessage(msg) {
     }
     //私聊
     if (await isRoomName(msg)) return
+    var crmUpdateRes =  updateCrmMsgRecord(msg.id, msg.text(), msg.talker(), "private chat", "私聊", robot);
     let content = await keyWordReply(msg.text())
-    if (!content) {
-      content = await getReply(msg.text())
-    }
-    await msg.say(content)
+    crmUpdateRes.then(async result => {
+      console.log(result)
+        if (result ) {
+          content = result.resultMsg;
+        }
+        if (!content) {
+          content = await getReply(msg.text())
+        }
+        await msg.say(content)
+  })
+    .catch (error => {
+    console.log(error); // 处理错误
+  });
+   
     return
   }
+}catch(e) {
+  console.log(e); // 处理错误
+}
 }
 /**
  * @description 收到消息是否群聊名称
@@ -131,6 +170,124 @@ async function addMsgRecord(id, msg, talker, groupId, groupName) {
   }
 }
 
+/**
+ * Crm消息记录
+ * @param {string} id 消息ID
+ * @param {string} msg 消息内容
+ * @param {string} talker 消息发送者
+ * @param {string} groupId 群聊ID
+ * @param {string} groupName 群聊名称
+ */
+async function addCrmMsgRecord(id, msg, talker, groupId, groupName, robot) {
+  try {
+    console.log("addCrmMsgRecord.add=>" + msg);
+    await MsgRecord.create();
+    const data = {
+      id: id,
+      personId: talker ? talker.id : null,
+      personName: talker ? talker.name() : null,
+      avatar: talker ? talker.avatar().name : null,
+      groupId: groupId,
+      groupName: groupName,
+      msg: msg,
+      dateTime: new Date(),
+      isAnalysis: 0,
+      botId: robot.id,
+      botCode: robot.id,
+      botName: robot.nickName,
+      senderId: talker ? talker.id : null,
+      senderName: talker ? talker.name() : null
+    };
+
+    const config = {
+      method: 'post',
+      url: crmUrl + '/wechatmsglog/save',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+
+    return new Promise((resolve, reject) => {
+      axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          if (response.data && response.data.success) {
+            console.log(JSON.stringify(response.data.data));
+            resolve(response.data.data); // 将请求结果作为主方法的返回值
+          } else {
+            reject(null);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject(error);
+        });
+    });
+  } catch (err) {
+    console.log("addCrmMsgRecord.add error=>" + err);
+    return Promise.reject(err);
+  }
+}
+/**
+ * Crm消息记录
+ * @param {string} id 消息ID
+ * @param {string} msg 消息内容
+ * @param {string} talker 消息发送者
+ * @param {string} groupId 群聊ID
+ * @param {string} groupName 群聊名称
+ */
+async function updateCrmMsgRecord(id, msg, talker, groupId, groupName, robot) {
+  try {
+    console.log("updateCrmMsgRecord.add=>" + msg);
+    await MsgRecord.create();
+    const data = {
+      id: id,
+      personId: talker ? talker.id : null,
+      personName: talker ? talker.name() : null,
+      avatar: talker ? talker.avatar().name : null,
+      groupId: groupId,
+      groupName: groupName,
+      msg: msg,
+      dateTime: new Date(),
+      isAnalysis: 0,
+      botId: robot.id,
+      botCode: robot.id,
+      botName: robot.nickName,
+      senderId: talker ? talker.id : null,
+      senderName: talker ? talker.name() : null
+    };
+
+    const config = {
+      method: 'post',
+      url: crmUrl + '/wechatmsglog/update',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+
+    return new Promise((resolve, reject) => {
+      axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          if (response.data && response.data.success) {
+            console.log(JSON.stringify(response.data.data));
+            resolve(response.data.data); // 将请求结果作为主方法的返回值
+          } else {
+            reject(null);
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject(error);
+        });
+    });
+  } catch (err) {
+    console.log("updateCrmMsgRecord.add error=>" + err);
+    return Promise.reject(err);
+  }
+}
 /**
  * 自定义回复
  * @param {string} keyword 关键字

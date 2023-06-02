@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\pages",
+    "\\pages\\auth",
+    "\\server",
+    "\\server\\bot",
+    "\\server\\bot\\lib",
+    "\\server\\controller",
+    "\\server\\middleware",
+    "\\server\\models",
+    "\\server\\routes",
+    "\\static"
+  ],
+  "PreviewInSolutionExplorer": false
+}

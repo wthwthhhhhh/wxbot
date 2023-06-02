@@ -34,7 +34,9 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.$auth.loginWith("local", { data: values });
+          this.$auth.loginWith("local", { data: values }, function () {
+            alert();
+          });
         }
       });
     }

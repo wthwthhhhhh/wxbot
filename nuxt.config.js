@@ -85,6 +85,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    parallel: true,
     /*
     ** You can extend webpack config here
     */
